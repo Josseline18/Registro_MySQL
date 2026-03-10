@@ -1,6 +1,6 @@
 import pika
 import json
-#se conecta a RabbitMQ y envía el mensaje del usuario registrado a la cola
+
 
 def send_message(message: dict):
     """Envía un mensaje a la cola de RabbitMQ"""

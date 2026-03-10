@@ -1,7 +1,7 @@
 #define la tabla usuarios en MySQL (columnas: id, username, password, created_at)
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
-from database import Base
+from app.infrastructure.database import Base
 
 
 class Usuario(Base):

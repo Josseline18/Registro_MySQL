@@ -1,29 +1,17 @@
-#El archivo principal: levanta FastAPI, recibe el POST, guarda el usuario en MySQL y llama a rabbit_producer.py para enviar el mensaje a RabbitMQ.
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from database import engine, get_db, Base
-from models import Usuario
-from schemas import UsuarioCreate, UsuarioResponse, UsuarioUpdate
-from rabbit_producer import send_message
+from app.infrastructure.database import get_db
+from app.domain.models import Usuario
+from app.domain.schemas import UsuarioCreate, UsuarioUpdate, UsuarioResponse
+from app.infrastructure.rabbit_producer import send_message
 
-# Crear las tablas en MySQL al iniciar
-Base.metadata.create_all(bind=engine)
-
-app = FastAPI(
-    title="API Registro de Usuarios",
-    description="Registra usuarios en MySQL y envía mensajes a RabbitMQ",
-    version="1.0.0"
-)
-
-@app.get("/")
-def root():
-    return {"message": "API de Registro de Usuarios - RabbitMQ + MySQL"}
+router = APIRouter()
 
 
-#POST (Create) 
-@app.post("/registrar", response_model=UsuarioResponse)
+# POST - Crear usuario
+@router.post("/registrar", response_model=UsuarioResponse)
 def registrar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     nuevo_usuario = Usuario(
         username=usuario.username,
@@ -61,8 +49,8 @@ def registrar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     )
 
 
-#GET (Listar usuarios)
-@app.get("/usuarios")
+# GET - Listar todos los usuarios
+@router.get("/usuarios")
 def listar_usuarios(db: Session = Depends(get_db)):
     usuarios = db.query(Usuario).all()
     return [
@@ -71,8 +59,8 @@ def listar_usuarios(db: Session = Depends(get_db)):
     ]
 
 
-#GET (Obtener un usuario por ID)
-@app.get("/usuarios/{usuario_id}")
+# GET - Obtener un usuario por ID
+@router.get("/usuarios/{usuario_id}")
 def obtener_usuario(usuario_id: int, db: Session = Depends(get_db)):
     usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
 
@@ -86,8 +74,8 @@ def obtener_usuario(usuario_id: int, db: Session = Depends(get_db)):
     }
 
 
-#PUT (Actualizar usuario)
-@app.put("/usuarios/{usuario_id}", response_model=UsuarioResponse)
+# PUT - Actualizar usuario
+@router.put("/usuarios/{usuario_id}", response_model=UsuarioResponse)
 def actualizar_usuario(usuario_id: int, datos: UsuarioUpdate, db: Session = Depends(get_db)):
     usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
 
@@ -129,8 +117,8 @@ def actualizar_usuario(usuario_id: int, datos: UsuarioUpdate, db: Session = Depe
     )
 
 
-#DELETE (Eliminar usuario)
-@app.delete("/usuarios/{usuario_id}")
+# DELETE - Eliminar usuario
+@router.delete("/usuarios/{usuario_id}")
 def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):
     usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
 
