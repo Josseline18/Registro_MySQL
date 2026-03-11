@@ -10,6 +10,8 @@ def callback(ch, method, properties, body):
     print(f"     Evento: {message.get('event')}")
     print(f"     Usuario ID: {message.get('user_id')}")
     print(f"     Username: {message.get('username')}")
+    print(f"     Especie: {message.get('especie')}")
+    print(f"     Titular: {message.get('titular')}")
     print(f"     Mensaje: {message.get('message')}")
     print("-" * 50)
     ch.basic_ack(delivery_tag=method.delivery_tag)
