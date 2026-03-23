@@ -1,0 +1,36 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.vscode/
+venv/
+
+# Archivos compilados de Python
+__pycache__/
+*.pyc
+
+# Variables de entorno
+.env
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Configuración de VS Code (opcional)
+.vscode/
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
+
+__pycache__/
+*.pyc
+.env
+
+__pycache__/
+*.pyc
+.venv/
+.env
+pweb/
